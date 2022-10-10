@@ -1,9 +1,11 @@
 import math
 from utils import proj_cart
 import matplotlib.pyplot as plt
+import matplotlib.animation as anim
 import numpy as np
 pres_num = 50
 
+pas = 10
 
 class Orbite():
     def __init__(self,a,e,i,o,w,grafics_dico=None):
@@ -42,6 +44,16 @@ class Orbite():
         astre.v = v
         astre.position = proj_cart(self,v)
         self.astres.append(astre)
+
+    def maj(self):
+        for i in self.astres:
+            new_v = self.anomalie_update(i.v)
+            i.position = proj_cart(self,new_v)
+            i.maj()
+    
+    @classmethod
+    def anomalie_update(self,v):
+        return v+0.3
 
 class Objet():
     def __init__(self,orbite,v,grafics_dico):
@@ -91,39 +103,72 @@ class Astre():
     def add_orbit(self,orbit):
         orbit.position = self.position
         self.orbits.append(orbit)
-    
 
+    def maj(self):
+        for i in self.orbits:
+            i.position = self.position
+            i.maj()
+    
 class Systeme():
     def __init__(self,size,list_systeme):
         plt.style.use('dark_background')
         plt.rcParams["figure.figsize"] = [15, 8]
         plt.rcParams["figure.autolayout"] = True
-
-        self.fig = plt.figure()
-        self.ax = plt.axes(projection='3d')
-        self.fig.set_facecolor('black')
-        self.ax.set_box_aspect([1,1,1])
-        self.ax.set_xlim3d(-size, size)
-        self.ax.set_ylim3d(-size, size)
-        self.ax.set_zlim3d(-size, size)
-        self.ax.grid(False)
-        #self.ax.set_xticks([])
-        #self.ax.set_yticks([])
-        #self.ax.set_zticks([])
-        self.ax.w_xaxis.pane.fill = False
-        self.ax.w_yaxis.pane.fill = False
-        self.ax.w_zaxis.pane.fill = False
-        self.ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
-        self.ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
-        self.ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
-        for i in list_systeme:
-            i.add_ax(self.ax)
         self.list_systems = list_systeme
+        self.fig = None
+        self.ax = None
+        self.size = size
+        self.init_axes(True)
+        
+        
 
-    def Affichage(self):
+    def init_axes(self,first = False):
+        if first:
+            self.fig = plt.figure()
+            self.ax = plt.axes(projection='3d')
+            self.fig.set_facecolor('black')
+            self.ax.set_box_aspect([1,1,1])
+            self.ax.set_xlim3d(-self.size, self.size)
+            self.ax.set_ylim3d(-self.size, self.size)
+            self.ax.set_zlim3d(-self.size, self.size)
+            self.ax.grid(False)
+            #self.ax.set_xticks([])
+            #self.ax.set_yticks([])
+            #self.ax.set_zticks([])
+            self.ax.w_xaxis.pane.fill = False
+            self.ax.w_yaxis.pane.fill = False
+            self.ax.w_zaxis.pane.fill = False
+            self.ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+            self.ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+            self.ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+        else:
+            self.ax.clear()
+
+        for i in self.list_systems:
+            i.add_ax(self.ax)
+
+    def affichage(self,first = False):
         
         for i in self.list_systems:
             i.affichage()
         
+        if first:
+            plt.show()
+    
+    def maj(self):
+
+        for i in self.list_systems:
+            i.maj()
+    
+    def simulate(self):
+
+        
+        a = anim.FuncAnimation(self.fig, self.update, frames=7, repeat=False)
         plt.show()
+
+    def update(self,i):
+
+        self.init_axes()
+        self.maj()
+        self.affichage()
 

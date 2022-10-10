@@ -1,5 +1,5 @@
 from Classes import *
-
+from utils import *
 #Unité de longueur : 1000Km ~ 10^6m
 
 Terre = Astre(r=6.371)
@@ -23,9 +23,10 @@ Lunar_Orbit.add_astres(Lune,0.3)
 Lune.add_orbit(Lunar_Gateway_Orbit)
 Lunar_Gateway_Orbit.add_astres(Lunar_Gateway,0.3)
 
-print(Lunar_Gateway_Orbit.position[0],
-       Lunar_Gateway_Orbit.position[1],
-       Lunar_Gateway_Orbit.position[2] )
+#print(Lunar_Gateway_Orbit.position[0],
+#       Lunar_Gateway_Orbit.position[1],
+#       Lunar_Gateway_Orbit.position[2] )
 
 sys1 = Systeme(300,[Terre])
-sys1.Affichage()
+#sys1.affichage()
+sys1.simulate()

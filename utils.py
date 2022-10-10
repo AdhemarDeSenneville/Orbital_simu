@@ -1,4 +1,7 @@
 from math import cos, sin
+import time
+
+FPS = 2
 
 def proj_cart(orbite,v):
     a = orbite.a
@@ -18,3 +21,16 @@ def proj_cart(orbite,v):
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+def Dynamique(sys,n):
+    for _ in range(n):
+        t = time.time()
+
+        sys.maj()
+        sys.affichage()
+
+        dt = time.time() - t
+        if dt<(2/FPS):
+            time.sleep(2/FPS-dt)
+
+        print(1/(time.time() - t),"FPS")
